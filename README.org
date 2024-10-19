@@ -1,13 +1,11 @@
 #+TITLE: GTFO - Get those files organized!
 
 * Description
-
 This program is designed to organize files based on type written in Haskell. I have [[https://github.com/BardofSprites/gtfo-lisp][another version]] in progress written in Common Lisp to compare against the Haskell version.
 
 The sorting will work by creating folders for files based their kind (Document, Music, Video, Image, etc...).
 
 ** Example
-
 Going from this:
 
 #+begin_src sh
@@ -58,5 +56,3 @@ To this:
 * Credits
 [[https://github.com/minecrafting-123][minecrafting-123:]] for the name idea
 I couldn't find the original repo that inspired me, but it exists on GitHub.
-
-
