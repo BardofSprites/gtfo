@@ -53,6 +53,10 @@ To this:
        └── video-4.mp4
 #+end_src
 
+* Plans
++ [X] playlist size checking to not overload cd
++ [ ] implement naming scheme like ~YYYY-MM-DDTHHMMSS--filename.ext~
+
 * Credits
 [[https://github.com/minecrafting-123][minecrafting-123:]] for the name idea
 I couldn't find the original repo that inspired me, but it exists on GitHub.
