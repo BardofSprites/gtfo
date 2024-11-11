@@ -1,6 +1,7 @@
 module Main where
 
 import Data.Monoid
+import Data.Maybe
 import System.FilePath
 import System.Directory
 import Control.Monad
@@ -12,14 +13,7 @@ data FileType = Document
               | Unknown
   deriving (Show, Eq, Ord)
 
-instance Monoid FileType where
-  mempty = Unknown
-  mappend Unknown x = x
-  mappend x Unknown = x
-  mappend x _ = x
-
-instance Semigroup FileType where
-  (<>) = mappend
+type FileMap = Map.Map FileType [FilePath]
 
 documentExt :: [String]
 documentExt = [".pdf", ".docx", ".txt", ".org"]
@@ -39,13 +33,7 @@ getFileType path
   where
     ext = takeExtension path
 
-filterByType :: FileType -> [FilePath] -> [FilePath]
-filterByType fileType allFiles = filter (\path -> getFileType path == fileType) allFiles
-
-mapFileType :: [FilePath] -> IO ()
-mapFileType files = mapM_ print (classifyFilesMap files)
-
-classifyFilesMap :: [FilePath] -> Map.Map FileType [FilePath]
+classifyFilesMap :: [FilePath] -> FileMap
 classifyFilesMap = foldr insertFileType Map.empty
   where
     insertFileType path acc =
@@ -64,17 +52,18 @@ getAllFiles baseDir excludedDirs = do
   nestedFiles <- forM dirsToSearch $ \dir -> getAllFiles dir excludedDirs
   return (files ++ concat nestedFiles)
 
-classifyAllFilesInDirectory :: FilePath -> [FilePath] -> IO (Map.Map FileType [FilePath])
+classifyAllFilesInDirectory :: FilePath -> [FilePath] -> IO (FileMap)
 classifyAllFilesInDirectory baseDir excludedDirs = do
   allFiles <- getAllFiles baseDir excludedDirs
   let fileTypeMap = classifyFilesMap allFiles
   return fileTypeMap
 
+filterFileType :: FileType -> FileMap -> Maybe [FilePath]
+filterFileType fileType fileMap = Map.lookup fileType fileMap
 
-testFunc :: IO ()
-testFunc = do
-  let baseDir = "/home/bard/Pictures/wallpaper"
-  let excludedDirs = [".git", "node_modules"]
+-- basically same as filterFileType, but nice printing
+prettyFileMap :: FilePath -> [FilePath] -> IO ()
+prettyFileMap baseDir excludedDirs = do
   fileTypeMap <- classifyAllFilesInDirectory baseDir excludedDirs
 
   mapM_ (\(fileType, files) -> do
@@ -84,9 +73,9 @@ testFunc = do
 
 main :: IO ()
 main = do
-  putStrLn "Hello world"
+  let baseDir = "/home/bard/Pictures/wallpaper"
+  let excludedDirs = [".git" , "node_modules"]
+  -- fileTypeMap <- classifyAllFilesInDirectory baseDir excludedDirs
+  -- putStrLn $ show $ filterFileType Picture fileTypeMap
 
-  -- let baseDir = "/home/bard/Notes/denote"
-  -- let excludedDirs = [".git", "ltximg"]
-  -- allFiles <- getAllFiles baseDir excludedDirs
-  -- mapFileType allFiles
+  prettyFileMap baseDir excludedDirs
