@@ -8,6 +8,9 @@ import System.Directory
 import Control.Monad
 import Control.Exception (catch, SomeException)
 import qualified Data.Map as Map
+import Data.Time.Clock
+import Data.Time.Format
+import Data.List (intercalate)
 
 data FileType = Document
               | Picture
