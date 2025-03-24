@@ -61,11 +61,13 @@ classifyFilesMap = foldr insertFileType Map.empty
         let fileType = getFileType path
         in Map.insertWith (++) fileType [path] acc
 
--- fileTypeFilter: filter files by file type from a dir, excluding dirs
-fileTypeFilter :: FilePath -> [FilePath] -> FileType -> IO [FilePath]
-fileTypeFilter dir excludedDirs fileType = do
-    files <- getAllFiles dir excludedDirs
-    return $ fromMaybe [] (Map.lookup fileType (classifyFilesMap files))
+-- Filter a file map [(Document, [All documents]), (Picture, [All pictures]), etc...] to list of certain filetype
+-- returns list of FileType param
+filterFileMap :: FileMap -> FileType -> [FilePath]
+filterFileMap fileMap fileType =
+    case Map.lookup fileType fileMap of
+        Just files -> files
+        Nothing    -> []
 
 copyFiles :: FileMap -> FilePath -> IO ()
 copyFiles fileMap destination = do
