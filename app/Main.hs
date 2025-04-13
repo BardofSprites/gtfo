@@ -84,10 +84,11 @@ copyFiles fileMap destination = do
 
 appendInfo :: FilePath -> [Keyword] -> IO FilePath
 appendInfo filePath keywords = do
-  currentTime <- getCurrentTime
-  let timestampStr = formatTime defaultTimeLocale "%Y%m%dT%H%M%S" currentTime
-      keywordsStr = intercalate "__" keywords
-      newFileName = timestampStr ++ "--" ++ keywordsStr ++ "--" ++ takeFileName filePath
+  let keywordsStr = intercalate "_" keywords
+      baseName = takeBaseName filePath
+      ext = takeExtension filePath
+      cleanBaseName = map (\c -> if c == ' ' then '-' else if isAlphaNum c || c == '-' then c else '_') baseName
+      newFileName = cleanBaseName ++ "__" ++ keywordsStr ++ ext
   return newFileName
 
 
